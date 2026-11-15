@@ -1,46 +1,128 @@
-# GlintPM Mobile App
+# GlintPM Backend — Phase 00 / Foundation
 
-A cross-platform mobile application for GlintPM customers and learners.
+Django + Django REST Framework foundation for the GlintPM mobile application.
 
-## Product areas
-- Home Dashboard
-- Training Academy
-- Career Hub
-- Professional Resources
-- Job Support and Consulting
+## Stack
 
-## Technology direction
-- Mobile: React Native, Expo, TypeScript, Expo Router
-- Backend: Python, Django, Django REST Framework
-- Database: PostgreSQL
-- Server-state management: TanStack Query
-- HTTP client: Axios
-- Forms: React Hook Form and Zod
-- Secure local storage: Expo SecureStore
-- Internal administration: Django Admin (Django Unfold is preferred)
+- Python 3.11+
+- Django 5.x
+- Django REST Framework
+- PostgreSQL
+- django-environ
+- django-cors-headers
 
-## Repository structure
+API prefix: `/api/v1/`
+
+## Project layout
+
 ```text
-glintpm-mobile-app/
-├── AGENTS.md
-├── README.md
-├── docs/
-└── backend/
+backend/
+├── config/
+│   ├── settings/
+│   │   ├── base.py
+│   │   ├── development.py
+│   │   └── production.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+├── apps/
+│   └── common/          # shared utilities, health endpoint
+├── tests/
+├── requirements/
+├── manage.py
+├── .env.example
+└── README.md
 ```
 
-The actual source folder names may differ if the repository has already been initialized. Do not restructure an existing project without approval.
+## Local setup
 
-## Getting started
-1. Read `AGENTS.md`.
-2. Read `docs/README.md`.
-3. Review `docs/development-roadmap.md`.
-4. Configure the frontend and backend environments using their respective example environment files.
-5. Follow the setup instructions in `docs/deployment-guide.md` for local development.
+### 1. Python virtual environment
 
-## Product scope
-The initial MVP covers authentication, learning, career opportunities, resources, support enquiries, payments/enrollment, notifications, and user profiles.
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements/development.txt
+```
 
-Primavera P6 XER analysis, DCMA schedule assessment, project assurance, and advanced project controls functionality are outside the initial MVP unless separately approved.
+### 2. Environment
 
-## Documentation
-See `docs/README.md` for the documentation index.
+```bash
+cp .env.example .env
+# Edit .env — set DJANGO_SECRET_KEY and DATABASE_URL
+```
+
+Generate a secret key if needed:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+### 3. Database
+
+**PostgreSQL (recommended):**
+
+```bash
+# Create database and user (example)
+createdb glintpm
+# or use your preferred PostgreSQL client
+```
+
+**Quick start without PostgreSQL:**
+
+```bash
+export USE_SQLITE=true
+```
+
+### 4. Migrations and run
+
+```bash
+export DJANGO_SETTINGS_MODULE=config.settings.development
+python manage.py migrate
+python manage.py createsuperuser   # optional
+python manage.py runserver
+```
+
+- Admin: http://127.0.0.1:8000/admin/
+- API root: http://127.0.0.1:8000/api/v1/
+- Health: http://127.0.0.1:8000/api/v1/health/
+
+## Tests
+
+```bash
+python manage.py test tests
+# or
+pytest
+```
+
+Tests use an in-memory SQLite database and do not require production secrets.
+
+## Health response
+
+```json
+{
+  "status": "ok",
+  "service": "glintpm-backend",
+  "version": "v1"
+}
+```
+
+## Phase scope
+
+This phase delivers only:
+
+- Project structure and split settings
+- Environment-based configuration
+- PostgreSQL (or SQLite for local convenience)
+- DRF and `/api/v1/` routing
+- `common` app with health and API root
+- Django Admin
+- Initial tests and setup documentation
+
+No domain models, authentication, or product APIs are included. Those belong to later phases.
+
+## Branch
+
+Suggested branch name: `backend-phase-00` (or `backend-phase-01` to match the repo’s phase-01 foundation document).
+
+Do not push or merge until the phase is reviewed and approved.

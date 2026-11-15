@@ -25,7 +25,6 @@ glintpm-mobile-app/
 ├── AGENTS.md
 ├── README.md
 ├── docs/
-├── mobile/
 └── backend/
 ```
 

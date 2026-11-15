@@ -5,26 +5,24 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = True
 
-# More permissive hosts for local development
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"]
+# Allow all hosts in development for convenience
+ALLOWED_HOSTS = ["*"]
 
-# Allow all origins in development (tighten for production)
-CORS_ALLOW_ALL_ORIGINS = True
+# Simpler static file serving in development
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
-# Optional: use SQLite when PostgreSQL is not available (set USE_SQLITE=true)
-import os
-
-if os.environ.get("USE_SQLITE", "false").lower() in ("1", "true", "yes"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-
-# Development-friendly logging
+# More verbose logging
 LOGGING["root"]["level"] = "DEBUG"  # noqa: F405
 LOGGING["loggers"]["django"]["level"] = "INFO"  # noqa: F405
+LOGGING["loggers"]["apps"]["level"] = "DEBUG"  # noqa: F405
 
-# Email backend for development (console)
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# DRF: allow browsable API in development
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [  # noqa: F405
+    "rest_framework.renderers.JSONRenderer",
+    "rest_framework.renderers.BrowsableAPIRenderer",
+]
+
+# Optional: Django Debug Toolbar (install separately if desired)
+# INSTALLED_APPS += ["debug_toolbar"]
+# MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+# INTERNAL_IPS = ["127.0.0.1"]

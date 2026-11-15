@@ -1,11 +1,11 @@
 """
-Common URL routes under /api/v1/.
+Common URL patterns under /api/v1/.
 """
 from django.urls import path
 
-from .views import APIRootView, HealthCheckView
+from .views import HealthCheckView, health_check_simple
 
 urlpatterns = [
-    path("", APIRootView.as_view(), name="api-root"),
-    path("health/", HealthCheckView.as_view(), name="health"),
+    path("health/", HealthCheckView.as_view(), name="health-check"),
+    path("health/simple/", health_check_simple, name="health-check-simple"),
 ]

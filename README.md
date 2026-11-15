@@ -1,19 +1,57 @@
-# GlintPM Backend — Phase 00 / Foundation
+# GlintPM Backend — Phase 01 Foundation
 
 Django + Django REST Framework foundation for the GlintPM mobile application.
 
-## Stack
+## Requirements
 
-- Python 3.11+
-- Django 5.x
-- Django REST Framework
-- PostgreSQL
-- django-environ
-- django-cors-headers
+- Python 3.11+ (3.12 recommended)
+- PostgreSQL 14+ (SQLite is used automatically if `DATABASE_URL` is not set)
+- Virtual environment recommended
 
-API prefix: `/api/v1/`
+## Quick start
 
-## Project layout
+```bash
+# 1. Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# 2. Install dependencies
+pip install -r requirements/development.txt
+
+# 3. Configure environment
+cp .env.example .env
+# Edit .env and set at least DJANGO_SECRET_KEY
+
+# 4. Run migrations
+python manage.py migrate
+
+# 5. Create a superuser (optional, for admin)
+python manage.py createsuperuser
+
+# 6. Start development server
+python manage.py runserver
+```
+
+## Endpoints (Phase 01)
+
+| Method | Path                    | Description                          |
+|--------|-------------------------|--------------------------------------|
+| GET    | `/api/v1/health/`       | Health check (includes DB status)    |
+| GET    | `/api/v1/health/simple/`| Lightweight health check             |
+| GET    | `/admin/`               | Django Admin (Unfold theme)          |
+
+Example health response:
+
+```json
+{
+  "status": "ok",
+  "service": "glintpm-backend",
+  "version": "v1",
+  "database": "connected"
+}
+```
+
+## Project structure
 
 ```text
 backend/
@@ -26,103 +64,38 @@ backend/
 │   ├── asgi.py
 │   └── wsgi.py
 ├── apps/
-│   └── common/          # shared utilities, health endpoint
-├── tests/
+│   └── common/          # shared utilities, health checks
 ├── requirements/
+│   ├── base.txt
+│   ├── development.txt
+│   └── production.txt
+├── tests/
 ├── manage.py
 ├── .env.example
 └── README.md
 ```
 
-## Local setup
+## Settings modules
 
-### 1. Python virtual environment
+- Development (default): `config.settings.development`
+- Production: `config.settings.production`
 
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements/development.txt
-```
-
-### 2. Environment
+Set via environment variable:
 
 ```bash
-cp .env.example .env
-# Edit .env — set DJANGO_SECRET_KEY and DATABASE_URL
+export DJANGO_SETTINGS_MODULE=config.settings.production
 ```
-
-Generate a secret key if needed:
-
-```bash
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
-
-### 3. Database
-
-**PostgreSQL (recommended):**
-
-```bash
-# Create database and user (example)
-createdb glintpm
-# or use your preferred PostgreSQL client
-```
-
-**Quick start without PostgreSQL:**
-
-```bash
-export USE_SQLITE=true
-```
-
-### 4. Migrations and run
-
-```bash
-export DJANGO_SETTINGS_MODULE=config.settings.development
-python manage.py migrate
-python manage.py createsuperuser   # optional
-python manage.py runserver
-```
-
-- Admin: http://127.0.0.1:8000/admin/
-- API root: http://127.0.0.1:8000/api/v1/
-- Health: http://127.0.0.1:8000/api/v1/health/
 
 ## Tests
 
 ```bash
-python manage.py test tests
+python manage.py test
 # or
 pytest
 ```
 
-Tests use an in-memory SQLite database and do not require production secrets.
+## Notes
 
-## Health response
-
-```json
-{
-  "status": "ok",
-  "service": "glintpm-backend",
-  "version": "v1"
-}
-```
-
-## Phase scope
-
-This phase delivers only:
-
-- Project structure and split settings
-- Environment-based configuration
-- PostgreSQL (or SQLite for local convenience)
-- DRF and `/api/v1/` routing
-- `common` app with health and API root
-- Django Admin
-- Initial tests and setup documentation
-
-No domain models, authentication, or product APIs are included. Those belong to later phases.
-
-## Branch
-
-Suggested branch name: `backend-phase-00` (or `backend-phase-01` to match the repo’s phase-01 foundation document).
-
-Do not push or merge until the phase is reviewed and approved.
+- Secrets must never be committed. Use `.env` (gitignored) and `.env.example`.
+- PostgreSQL is the target database. SQLite is accepted only for local bootstrap when `DATABASE_URL` is unset.
+- No domain models or business APIs are implemented in Phase 01.

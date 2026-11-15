@@ -1,6 +1,8 @@
 """
-Common API views — health and API root for Phase 00 foundation.
+Common views — health check and shared API infrastructure.
 """
+from django.db import connection
+from django.http import JsonResponse
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,37 +11,39 @@ from rest_framework.views import APIView
 class HealthCheckView(APIView):
     """
     Minimal health endpoint.
-    Confirms the application is running without exposing secrets or internal config.
+    Confirms application availability without exposing secrets or internal configuration.
     """
 
     permission_classes = [AllowAny]
     authentication_classes = []
 
     def get(self, request):
-        return Response(
-            {
-                "status": "ok",
-                "service": "glintpm-backend",
-                "version": "v1",
-            }
-        )
+        db_ok = False
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                db_ok = cursor.fetchone() is not None
+        except Exception:
+            db_ok = False
+
+        status_code = 200 if db_ok else 503
+        payload = {
+            "status": "ok" if db_ok else "degraded",
+            "service": "glintpm-backend",
+            "version": "v1",
+            "database": "connected" if db_ok else "unavailable",
+        }
+        return Response(payload, status=status_code)
 
 
-class APIRootView(APIView):
+def health_check_simple(request):
     """
-    API version root under /api/v1/.
-    Lists available top-level resources as they are added in later phases.
+    Lightweight health check that does not depend on DRF.
+    Useful for load balancers and container probes.
     """
-
-    permission_classes = [AllowAny]
-    authentication_classes = []
-
-    def get(self, request):
-        return Response(
-            {
-                "message": "GlintPM API v1",
-                "endpoints": {
-                    "health": request.build_absolute_uri("health/"),
-                },
-            }
-        )
+    return JsonResponse(
+        {
+            "status": "ok",
+            "service": "glintpm-backend",
+        }
+    )

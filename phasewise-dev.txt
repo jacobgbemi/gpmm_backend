@@ -1,0 +1,47 @@
+## 7. Default Cross-Repository Development Sequence
+
+This is the **default planning sequence**, subject to the actual phase documentation and dependency checks. If documentation specifies a different valid order, explain the difference and request approval before changing the sequence.
+
+### Stage A — Foundations
+1. Backend Phase 00 — Foundation
+2. Frontend Phase 00 — Foundation
+3. Backend Phase 01 — Core database models
+4. Frontend Phase 01 — Design system and reusable components
+5. Frontend Phase 02 — Navigation and app structure
+6. Frontend Phase 03 — Authentication structure/protected navigation preparation, as applicable
+
+### Stage B — Core Data and Authentication
+1. Backend Phase 02 — Core database models, if not already completed in Stage A
+2. Backend Phase 03 — Authentication
+3. Frontend Phase 04 — Authentication and user onboarding
+
+Resolve numbering or dependency overlap by consulting actual phase Markdown files. Do not implement a phase twice.
+
+### Stage C — Training and Dashboard
+1. Backend Phase 04 — Training Academy APIs
+2. Backend Phase 05 — Enrollment and learning progress APIs
+3. Backend Phase 06 — Dashboard API
+4. Frontend Phase 05 — Home dashboard
+5. Frontend Phase 06 — Training Academy
+6. Frontend Phase 07 — Enrollment and learning experience
+
+### Stage D — Career Hub and Resources
+1. Backend Phase 07 — Career Hub APIs
+2. Backend Phase 08 — Professional Resources APIs
+3. Frontend Phase 08 — Career Hub
+4. Frontend Phase 09 — Professional Resources
+
+### Stage E — Support and Payments
+1. Backend Phase 09 — Support and consulting APIs
+2. Backend Phase 10 — Payment integration
+3. Frontend Phase 10 — Support and consulting
+4. Frontend Phase 11 — Payments and checkout
+
+### Stage F — Notifications, Profile, and QA
+1. Backend Phase 11 — Notifications, profile, and settings APIs
+2. Frontend Phase 12 — Profile, notifications, and settings
+3. Backend Phase 12 — API QA, security, and integration testing
+
+### Stage G — Release and Deployment
+1. Frontend Phase 13 — Testing, build, and release readiness
+2. Backend Phase 13 — Production deployment
